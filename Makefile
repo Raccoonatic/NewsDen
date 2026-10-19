@@ -6,7 +6,7 @@
 #    By: Mapache <ljtorcate@gmail.com>               █░  ░░░ ░░ ░░░  ░█        #
 #                                                    ███████░░░░███████        #
 #    Created: 2026/10/19 07:44:25 by Mapache        ░▒▒██ ▓  ██  ▓ ██▒▒░       #
-#    Updated: 2026/10/19 10:19:50 by Mapache            ▒ ░██  ██░ ▒           #
+#    Updated: 2026/10/19 11:15:43 by Mapache            ▒ ░██  ██░ ▒           #
 #                                                          ██████              #
 #                                                                              #
 # **************************************************************************** #
@@ -32,9 +32,16 @@ SCHEMA += 03_user_schema.sql
 SCHEMA += 04_article_schema.sql
 
 load_schemas:
-	$(DB_BLUEPRINT)
+	@RET=command make postgres_status
+	if [$RET -eq "$(MINT)● $(NEOR)Container $(B_WI)'$(LIME)newsden-postgres$(B_WI)' $(NEOR)is $(MINT)RUNNING$(RSET)"]; then \
+		echo "$(NEOR)🦝 Loading up the schemas..."; \
+		make db_blueprint; \
+	else \
+		echo "$(RET)"; \
+	fi
 
-$(DB_BLUEPRINT): $(DB_DIR)%.sql
+db_blueprint: $(DB_DIR)%.sql
+	sudo docker exec -i newsden-postgres psql -U postgres -d postgres < $<
 
 tools:
 	@echo "$(MINT)\t  🦝 Checking for tools and updates! 🦝"
