@@ -97,7 +97,9 @@ TBD
 TBD
 
 ## 📚 Resources
-TBD
+- Managing Databases: DBeaver
+- Website Workbench: Next.js
+- Testing ProstgreSQL: Docker
 
 ---
 
