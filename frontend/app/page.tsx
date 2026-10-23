@@ -5,18 +5,33 @@
 /*                                                  ▒▒▒░░▒▒░▓░░▓░▒▒░░▒▒▒      */
 /*   By: Mapache <ljtorcate@gmail.com>               █░  ░░░ ░░ ░░░  ░█       */
 /*                                                   ███████░░░░███████       */
-/*   Created: 2026/10/19 10:24:52 by Mapache        ░▒▒██ ▓  ██  ▓ ██▒▒░      */
-/*   Updated: 2026/10/22 16:09:38 by Mapache            ▒ ░██  ██░ ▒          */
+/*   Created: 2026/10/23 23:27:08 by Mapache        ░▒▒██ ▓  ██  ▓ ██▒▒░      */
+/*   Updated: 2026/10/24 00:23:54 by Mapache            ▒ ░██  ██░ ▒          */
 /*                                                         ██████             */
 /*                                                                            */
 /* ************************************************************************** */
 
+// import pool from '@/lib/db';
+
+// export default async function Home() {
+//   const result = await pool.query('SELECT NOW()');
+//   const dbTime = result.rows[0].now;
+
+//   return (
+//     <main className="flex min-h-screen flex-col items-center justify-center p-24 bg-gray-900 text-white">
+//       <h1 className="text-4xl font-bold text-emerald-400 mb-4">
+//         🦝 NewsDen Database Connected!
+//       </h1>
+//       <p className="text-xl">
+//         Database Time: <span className="font-mono text-pink-400">{dbTime.toString()}</span>
+//       </p>
+//     </main>
+//   );
+// }
+
 import { Pool } from 'pg';
 import { revalidatePath } from 'next/cache';
-
-const pool = new Pool({
-  connectionString: process.env.DATABASE_URL,
-});
+import pool from '@/lib/db';
 
 interface User {
   id: string;
@@ -28,15 +43,16 @@ interface User {
 
 async function createUser(formData: FormData) {
   'use server';
-
   const fullName = formData.get('fullName') as string;
   const email = formData.get('email') as string;
 
   try {
+    // We are inserting 'id_checked' explicitly as false as per your DBeaver table defaults
     await pool.query(
-      'INSERT INTO users (full_name, email) VALUES ($1, $2)',
-      [fullName, email]
+      'INSERT INTO users (full_name, email, id_checked) VALUES ($1, $2, $3)',
+      [fullName, email, false]
     );
+    // This tells Next.js to wipe its cache and rebuild the page with the new user!
     revalidatePath('/');
   } catch (error) {
     console.error("Failed to create user:", error);
@@ -44,11 +60,12 @@ async function createUser(formData: FormData) {
 }
 
 export default async function Home() {
+  // Fetch existing users
   const { rows: users } = await pool.query<User>('SELECT * FROM users ORDER BY created_at DESC');
 
   return (
     <main className="min-h-screen p-8 bg-gray-900 text-white font-sans">
-		<div className="max-w-2xl mx-auto space-y-8">
+        <div className="max-w-2xl mx-auto space-y-8">
         <h1 className="text-3xl font-bold text-teal-400">Huella Latina: User Registration</h1>
 
         {/* The Submission Form */}
@@ -59,7 +76,7 @@ export default async function Home() {
               type="text"
               name="fullName"
               required
-              className="w-full p-2 rounded bg-gray-700 border border-gray-600 focus:border-teal-400 outline-none"
+              className="w-full p-2 rounded bg-gray-700 border border-gray-600 focus:border-teal-400 outline-none text-white"
             />
           </div>
           <div>
@@ -68,7 +85,7 @@ export default async function Home() {
               type="email"
               name="email"
               required
-              className="w-full p-2 rounded bg-gray-700 border border-gray-600 focus:border-teal-400 outline-none"
+              className="w-full p-2 rounded bg-gray-700 border border-gray-600 focus:border-teal-400 outline-none text-white"
             />
           </div>
           <button
@@ -92,7 +109,6 @@ export default async function Home() {
                   <p className="text-sm text-gray-400">{user.email}</p>
                 </div>
                 <div className="text-right">
-                  {/* Shows the default 'REGISTERED' enum from your schema */}
                   <span className="bg-gray-700 text-teal-300 text-xs px-2 py-1 rounded uppercase tracking-wide">
                     {user.status}
                   </span>
@@ -104,7 +120,6 @@ export default async function Home() {
             ))
           )}
         </div>
-
       </div>
     </main>
   );

@@ -27,7 +27,7 @@ The end product is the entire infrastructure for an Online Newspaper. The system
 
 The infrastructure supports three types of visitors: Readers who only view news on the front page, "Editors" (staff making publishing decisions), and "Reporters" (contributors authorized to submit news, video, and research). Badges and Priority Scales are designed to be modular, therefore, while the system defines some by default, they can be tweaked to the needs of the Newspaper.
 
-**This prototype**, is built as a proof of concept, that can be run locally from an Linux Ubuntu/Debian system to explore the capabilities of the system and taylor it to the companies needs before deployment.
+**This prototype**, is built as a proof of concept, that can be run locally from an Linux Ubuntu/Debian system to explore the capabilities of the system and taylor it to the newspaper's needs before deployment.
 
 ## ⚙️ Instructions
 TBD

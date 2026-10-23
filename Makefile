@@ -6,7 +6,7 @@
 #    By: Mapache <ljtorcate@gmail.com>               █░  ░░░ ░░ ░░░  ░█        #
 #                                                    ███████░░░░███████        #
 #    Created: 2026/10/19 07:44:25 by Mapache        ░▒▒██ ▓  ██  ▓ ██▒▒░       #
-#    Updated: 2026/10/23 21:27:08 by Mapache            ▒ ░██  ██░ ▒           #
+#    Updated: 2026/10/23 23:35:49 by Mapache            ▒ ░██  ██░ ▒           #
 #                                                          ██████              #
 #                                                                              #
 # **************************************************************************** #
@@ -112,6 +112,7 @@ all:
 	@sleep 2
 	@make load_schemas
 
+
 rebirth: postgres_delete all
 
 restart: postgres_down all
@@ -154,12 +155,12 @@ tools:
 	@echo -e "$(PINK)  - $(PURP)Node.js"
 	@echo -e "$(PINK)  - $(PURP)NVM (Node Version Manager)"
 	@echo -e "$(PINK)  - $(PURP)NPM (Node Package Manager)"
-	@echo -e "$(B_WI)\n     If you'd like to proceed, hit enter. Otherwise, cancel \n                    $(NEOR)(\"Ctrl + C\" by default).$(RSET)"
+	@echo -e "$(B_WI)\n     If you'd like to proceed, hit $(LIME)enter. Otherwise, $(ORNG)cancel \n                    $(NEOR)(\"Ctrl + C\" by default).$(RSET)"
 	@read dummy
 	@echo -e "$(BABY)Updating Packages...$(RSET)"
 	sudo apt update
 	@sleep 2
-	@echo -e "$(BABY)Checking Tools..."
+	@echo -e "\n$(BABY)Checking Tools..."
 	@sleep 2
 	@if command -v git >/dev/null 2>&1; then \
 	echo -e "$(BABY)✓$(MINT) Git $(LIME)is already installed. $(NEOR)Checking for updates...$(B_WI)"; \
@@ -206,22 +207,31 @@ tools:
 		sudo snap install dbeaver-ce; \
 		echo -e "$(RSET)"; \
 	fi
-	@if command -v nodejs >/dev/null 2>&1; then \
-	echo -e "$(BABY)✓$(MINT) Node.js $(LIME)is already installed. $(NEOR)Checking for updates...$(B_WI)"; \
-		sudo apt install --only-upgrade -y nodejs; \
+	@if [ -s "$$HOME/.nvm/nvm.sh" ]; then \
+		echo -e "$(BABY)✓$(MINT) NVM $(LIME)is already installed. $(NEOR)Checking for updates...$(B_WI)"; \
+		cd $$HOME/.nvm && git fetch --tags origin && git checkout `git describe --abbrev=0 --tags --match "v[0-9]*" $(git rev-list --tags --max-count=1)` >/dev/null 2>&1 && cd - >/dev/null 2>&1; \
 		echo -e "$(RSET)"; \
 	else \
-	echo -e "$(PINK)✗$(MINT) Node.js $(BLOD)not found. $(NEOR)Installing...$(B_WI)"; \
-		sudo apt install -y nodejs; \
+		echo -e "$(PINK)✗$(MINT) NVM $(BLOD)not found. $(NEOR)Installing...$(B_WI)"; \
+		curl -o- https://raw.githubusercontent.com/nvm-sh/nvm/v0.40.1/install.sh | bash >/dev/null 2>&1; \
 		echo -e "$(RSET)"; \
 	fi
-	@if command -v npm >/dev/null 2>&1; then \
-	echo -e "$(BABY)✓$(MINT) NPM (Node Package Manager) $(LIME)is already installed. $(NEOR)Checking for updates...$(B_WI)"; \
-		sudo apt install --only-upgrade -y npm; \
+	@if command -v node >/dev/null 2>&1 || [ -s "$$HOME/.nvm/nvm.sh" ]; then \
+		echo -e "$(BABY)✓$(MINT) Node.js $(LIME)is already installed. $(NEOR)Checking for updates...$(B_WI)"; \
+		. "$$HOME/.nvm/nvm.sh" && nvm install --lts >/dev/null 2>&1; \
 		echo -e "$(RSET)"; \
 	else \
-	echo -e "$(PINK)✗$(MINT) NPM (Node Package Manager) $(BLOD)not found. $(NEOR)Installing...$(B_WI)"; \
-		sudo apt install -y npm; \
+		echo -e "$(PINK)✗$(MINT) Node.js $(BLOD)not found. $(NEOR)Installing...$(B_WI)"; \
+		. "$$HOME/.nvm/nvm.sh" && nvm install --lts >/dev/null 2>&1; \
+		echo -e "$(RSET)"; \
+	fi
+	@if command -v npm >/dev/null 2>&1 || [ -s "$$HOME/.nvm/nvm.sh" ]; then \
+		echo -e "$(BABY)✓$(MINT) NPM (Node Package Manager) $(LIME)is already installed. $(NEOR)Checking for updates...$(B_WI)"; \
+		. "$$HOME/.nvm/nvm.sh" && npm install -g npm@latest >/dev/null 2>&1; \
+		echo -e "$(RSET)"; \
+	else \
+		echo -e "$(PINK)✗$(MINT) NPM (Node Package Manager) $(BLOD)not found. $(NEOR)Installing...$(B_WI)"; \
+		. "$$HOME/.nvm/nvm.sh" && npm install -g npm@latest >/dev/null 2>&1; \
 		echo -e "$(RSET)"; \
 	fi
 
@@ -253,6 +263,9 @@ postgres_up:
 	else \
 		echo -e "$(MINT)Creating and starting new $(B_WI)'$(BABY)newsden-postgres$(B_WI)' $(MINT)container...$(RSET)\n"; \
 		sudo docker run --name newsden-postgres -e POSTGRES_PASSWORD=$(PSWD) -p 5432:5432 -d postgres:16; \
+		touch frontend/.env.local; \
+		echo -n "" >frontend/.env.local && echo -n "DATABASE_URL=postgresql://postgres:" >frontend/.env.local; \
+		echo -n $(PSWD) >>frontend/.env.local && echo -n "@localhost:5432/postgres" >>frontend/.env.local; \
 		sleep 1; \
 	fi
 
@@ -287,6 +300,7 @@ postgres_delete:
 		sleep 0.3; \
 		echo -e ".$(RSET)"; \
 		sudo docker rm -f newsden-postgres; \
+		rm -rf frontend/.env.local; \
 	else \
 		echo -e "$(ORNG)Container $(B_WI)'$(LIME)newsden-postgres$(B_WI)' $(ORNG)does not exist$(B_WI). $(NEOR)Nothing to delete.$(RSET)"; \
 	fi
