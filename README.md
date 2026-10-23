@@ -1,3 +1,15 @@
+<!-- ********************************************************************** -->
+<!--                                                                        -->
+<!--                                                 ▒▓              ▓▒     -->
+<!-- README.md                                      ▒▒ ▓▓▓        ▓▓▓ ▒▒    -->
+<!--                                                ▒▒▒░░▒▒░▓░░▓░▒▒░░▒▒▒    -->
+<!-- By: Mapache <ljtorcate@gmail.com>               █░  ░░░ ░░ ░░░  ░█     -->
+<!--                                                 ███████░░░░███████     -->
+<!-- Created: 2026/10/22 16:10:08 by Mapache        ░▒▒██ ▓  ██  ▓ ██▒▒░    -->
+<!-- Updated: 2026/10/22 16:10:13 by Mapache            ▒ ░██  ██░ ▒        -->
+<!--                                                       ██████           -->
+<!--                                                                        -->
+<!-- ********************************************************************** -->
 
 <p align="center">
  <img src=".assets/README_img/newsden_banner.png" alt="Banner" width="800">
@@ -14,6 +26,8 @@
 The end product is the entire infrastructure for an Online Newspaper. The system features a modular architecture designed with a default directive: posting the incoming article. The article is reviewed and developed in different stages, and every step of the article's lifetime can be toggled on or off. If all steps are shut off, all incoming work must be published directly.
 
 The infrastructure supports three types of visitors: Readers who only view news on the front page, "Editors" (staff making publishing decisions), and "Reporters" (contributors authorized to submit news, video, and research). Badges and Priority Scales are designed to be modular, therefore, while the system defines some by default, they can be tweaked to the needs of the Newspaper.
+
+**This prototype**, is built as a proof of concept, that can be run locally from an Linux Ubuntu/Debian system to explore the capabilities of the system and taylor it to the companies needs before deployment.
 
 ## ⚙️ Instructions
 TBD
@@ -71,12 +85,34 @@ The infrastructure heavily relies on a modular priority and badge system that co
  <img src=".assets/README_img/lifetime_flowchart.png" alt="Lifetime of an Article">
 </p>
 
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
 ---
 
 ### API Endpoints
 TBD
 
 <br></br>
+
+
+
 ---
 
 ## 🧠 Technical Overview
@@ -98,8 +134,12 @@ TBD
 
 ## 📚 Resources
 - Managing Databases: DBeaver
-- Website Workbench: Next.js
+- Website Framework: Next.js
+- Website Back End API: Node.js
 - Testing ProstgreSQL: Docker
+- Version Control for Node.js & NPM: NVM (Node Version Manager)
+- PostgresSQL Interaction Functions: NPM (Node Package Management)
+- Web Design & Infrastructure Tools: NPX (Node Package Execute)
 
 ---
 
@@ -113,7 +153,7 @@ This repository and its contents are proprietary and confidential. No part of th
 
 ## 🧾 Final Notes 🦝
 
-If you made it this far…width="800"
+If you made it this far…
 
 Merry Christmas.
 Take a break. Drink water. Maybe eat an arepa.
