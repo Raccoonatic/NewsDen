@@ -6,7 +6,7 @@
 #    By: Mapache <ljtorcate@gmail.com>               █░  ░░░ ░░ ░░░  ░█        #
 #                                                    ███████░░░░███████        #
 #    Created: 2026/10/19 07:44:25 by Mapache        ░▒▒██ ▓  ██  ▓ ██▒▒░       #
-#    Updated: 2026/10/23 23:35:49 by Mapache            ▒ ░██  ██░ ▒           #
+#    Updated: 2026/10/27 23:32:58 by Mapache            ▒ ░██  ██░ ▒           #
 #                                                          ██████              #
 #                                                                              #
 # **************************************************************************** #
@@ -28,8 +28,8 @@ RSET = \033[0m
 DB_DIR = database/
 
 SCHEMA = 01_enum_schema.sql
-SCHEMA += 02_badge_schema.sql
-SCHEMA += 03_user_schema.sql
+SCHEMA += 02_editor_schema.sql
+SCHEMA += 03_reporter_schema.sql
 SCHEMA += 04_article_schema.sql
 
 BLUEPRINT = $(addprefix $(DB_DIR), $(SCHEMA))
@@ -111,6 +111,26 @@ all:
 	@echo -e "\n"
 	@sleep 2
 	@make load_schemas
+	@sleep 2
+	@echo "$(MINT)Starting $(LIME)Next.js $(MINT)development server$(B_WI)...$(RSET)"
+	@echo -e "$(NEOR)\n     This window will now act as the running server, don't \n     close it while is working. If you need to use the terminal \n                    please open a new window.$(RSET)"
+	@sleep 2
+	@echo -n -e "$(B_WI)🚀 Launching...
+	@sleep 1
+	@echo -e -n "$(B_WI) In 3"
+	@sleep 1
+	@echo -e -n " 2 "
+	@sleep 1
+	@echo -e -n "1 "
+	@sleep 1
+	@echo -e -n "."
+	@sleep 0.5
+	@echo -e -n "."
+	@sleep 0.5
+	@echo -e ".$(RSET)"
+	@sleep 0.5
+	@echo -e " 🚀"
+	@npm run dev
 
 
 rebirth: postgres_delete all
@@ -228,10 +248,16 @@ tools:
 	@if command -v npm >/dev/null 2>&1 || [ -s "$$HOME/.nvm/nvm.sh" ]; then \
 		echo -e "$(BABY)✓$(MINT) NPM (Node Package Manager) $(LIME)is already installed. $(NEOR)Checking for updates...$(B_WI)"; \
 		. "$$HOME/.nvm/nvm.sh" && npm install -g npm@latest >/dev/null 2>&1; \
+		if [ ! -d "node_modules" ]; then \
+			npm install; \
+		fi; \
 		echo -e "$(RSET)"; \
 	else \
 		echo -e "$(PINK)✗$(MINT) NPM (Node Package Manager) $(BLOD)not found. $(NEOR)Installing...$(B_WI)"; \
 		. "$$HOME/.nvm/nvm.sh" && npm install -g npm@latest >/dev/null 2>&1; \
+		if [ ! -d "node_modules" ]; then \
+			npm install; \
+		fi; \
 		echo -e "$(RSET)"; \
 	fi
 
@@ -263,9 +289,9 @@ postgres_up:
 	else \
 		echo -e "$(MINT)Creating and starting new $(B_WI)'$(BABY)newsden-postgres$(B_WI)' $(MINT)container...$(RSET)\n"; \
 		sudo docker run --name newsden-postgres -e POSTGRES_PASSWORD=$(PSWD) -p 5432:5432 -d postgres:16; \
-		touch frontend/.env.local; \
-		echo -n "" >frontend/.env.local && echo -n "DATABASE_URL=postgresql://postgres:" >frontend/.env.local; \
-		echo -n $(PSWD) >>frontend/.env.local && echo -n "@localhost:5432/postgres" >>frontend/.env.local; \
+		touch .env.local; \
+		echo -n "" >.env.local && echo -n "DATABASE_URL=postgresql://postgres:" >.env.local; \
+		echo -n $(PSWD) >>.env.local && echo -n "@localhost:5432/postgres" >>.env.local; \
 		sleep 1; \
 	fi
 
@@ -300,7 +326,7 @@ postgres_delete:
 		sleep 0.3; \
 		echo -e ".$(RSET)"; \
 		sudo docker rm -f newsden-postgres; \
-		rm -rf frontend/.env.local; \
+		rm -rf .env.local; \
 	else \
 		echo -e "$(ORNG)Container $(B_WI)'$(LIME)newsden-postgres$(B_WI)' $(ORNG)does not exist$(B_WI). $(NEOR)Nothing to delete.$(RSET)"; \
 	fi

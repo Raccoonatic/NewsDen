@@ -6,24 +6,57 @@
 --   By: Mapache <ljtorcate@gmail.com>               █░  ░░░ ░░ ░░░  ░█       --
 --                                                   ███████░░░░███████       --
 --   Created: 2026/10/19 12:17:42 by Mapache        ░▒▒██ ▓  ██  ▓ ██▒▒░      --
---   Updated: 2026/10/22 16:09:27 by Mapache            ▒ ░██  ██░ ▒          --
+--   Updated: 2026/10/27 22:05:11 by Mapache            ▒ ░██  ██░ ▒          --
 --                                                         ██████             --
 --                                                                            --
 -- ************************************************************************** --
 
-CREATE TYPE article_stage AS ENUM (
-    'INGESTION',
-    'EVALUATION',
-    'NEWSROOM_REVIEW',
-    'DRAFTING',
-    'DIRECTOR_REVIEW',
-    'PUBLISHED'
+CREATE TYPE article_status AS ENUM (
+	'INGESTED',
+	'EVALUATED',
+	'RESOURCE_ALLOCATION',
+	'DRAFTING',
+	'IN_REVIEW',
+	'PUBLISHED',
+	'REJECTED',
+	'ARCHIVED'
 );
 
-CREATE TYPE user_status AS ENUM (
-    'REGISTERED',
-    'VIEWER',
-    'FIELD',
-    'RESTRICTED',
-    'DEACTIVATED'
+CREATE TYPE article_stage AS ENUM (
+	'INGESTION',
+	'EVALUATION',
+	'NEWSROOM_REVIEW',
+	'DRAFTING',
+	'DIRECTOR_REVIEW',
+	'PUBLICATION',
+	'ARCHIVE'
+);
+
+CREATE TYPE user_state AS ENUM (
+	'REGISTERED',
+	'ACTIVE',
+	'RESTRICTED',
+	'DEACTIVATED'
+);
+
+CREATE TYPE reporter_badge AS ENUM (
+	'VIEWER',
+	'FIELD',
+	'PHOTOGRAPHER',
+	'VIDEOGRAPHER',
+	'REDACTER',
+	'INTERVIEWER',
+	'INSPECTOR'
+);
+
+CREATE TYPE editor_badge AS ENUM (
+	'DEV',
+	'ADMIN',
+	'DIRECTOR',
+	'COORDINATOR',
+	'DESIGNER',
+	'WRITER',
+	'AGENT',
+	'MOD',
+	'NITWIT'
 );
