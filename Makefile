@@ -6,7 +6,7 @@
 #    By: Mapache <ljtorcate@gmail.com>               █░  ░░░ ░░ ░░░  ░█        #
 #                                                    ███████░░░░███████        #
 #    Created: 2026/10/19 07:44:25 by Mapache        ░▒▒██ ▓  ██  ▓ ██▒▒░       #
-#    Updated: 2026/10/27 23:32:58 by Mapache            ▒ ░██  ██░ ▒           #
+#    Updated: 2026/10/27 23:53:23 by Mapache            ▒ ░██  ██░ ▒           #
 #                                                          ██████              #
 #                                                                              #
 # **************************************************************************** #
@@ -112,24 +112,24 @@ all:
 	@sleep 2
 	@make load_schemas
 	@sleep 2
-	@echo "$(MINT)Starting $(LIME)Next.js $(MINT)development server$(B_WI)...$(RSET)"
-	@echo -e "$(NEOR)\n     This window will now act as the running server, don't \n     close it while is working. If you need to use the terminal \n                    please open a new window.$(RSET)"
+	@echo -e "\n$(MINT)             Starting $(LIME)Next.js $(MINT)development server$(B_WI)...$(RSET)"
+	@echo -e "$(NEOR)\n     This window will now act as the running server, don't \n   close it while is working. If you need to use the terminal \n                    please open a new window.$(RSET)"
 	@sleep 2
-	@echo -n -e "$(B_WI)🚀 Launching...
+	@echo -n -e "\n$(B_WI)                🚀 Launching..."
 	@sleep 1
-	@echo -e -n "$(B_WI) In 3"
+	@echo -e -n "$(B_WI) In 3,"
 	@sleep 1
-	@echo -e -n " 2 "
+	@echo -e -n " 2, "
 	@sleep 1
-	@echo -e -n "1 "
+	@echo -e -n "1"
 	@sleep 1
 	@echo -e -n "."
 	@sleep 0.5
 	@echo -e -n "."
 	@sleep 0.5
-	@echo -e ".$(RSET)"
+	@echo -e -n ".$(RSET)"
 	@sleep 0.5
-	@echo -e " 🚀"
+	@echo -e " 🚀\n"
 	@npm run dev
 
 
@@ -312,13 +312,13 @@ postgres_delete:
 	@if sudo docker ps -a --format '{{.Names}}' | grep -q '^newsden-postgres$$'; then \
 		echo -n -e "$(ORNG)⚠ Removing $(B_WI)'$(LIME)newsden-postgres$(B_WI)' $(ORNG)container.$(RSET)"; \
 		sleep 0.5; \
-		echo -e -n "$(B_WI) In 3"; \
+		echo -e -n "$(B_WI) In 3,"; \
 		sleep 1; \
-		echo -e -n " 2 "; \
+		echo -e -n " 2, "; \
 		sleep 1; \
-		echo -e -n "1 "; \
+		echo -e -n "1. "; \
 		sleep 0.5; \
-		echo -e -n "$(BLOD)boom"; \
+		echo -e -n "$(BLOD)Boom"; \
 		sleep 0.3; \
 		echo -e -n "$(B_WI)."; \
 		sleep 0.3; \
