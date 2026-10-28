@@ -6,12 +6,13 @@
 --   By: Mapache <ljtorcate@gmail.com>               █░  ░░░ ░░ ░░░  ░█       --
 --                                                   ███████░░░░███████       --
 --   Created: 2026/10/19 12:17:42 by Mapache        ░▒▒██ ▓  ██  ▓ ██▒▒░      --
---   Updated: 2026/10/27 22:05:11 by Mapache            ▒ ░██  ██░ ▒          --
+--   Updated: 2026/10/28 11:26:54 by Mapache            ▒ ░██  ██░ ▒          --
 --                                                         ██████             --
 --                                                                            --
 -- ************************************************************************** --
 
-CREATE TYPE article_status AS ENUM (
+CREATE TYPE article_status AS ENUM
+(
 	'INGESTED',
 	'EVALUATED',
 	'RESOURCE_ALLOCATION',
@@ -22,7 +23,8 @@ CREATE TYPE article_status AS ENUM (
 	'ARCHIVED'
 );
 
-CREATE TYPE article_stage AS ENUM (
+CREATE TYPE article_stage AS ENUM
+(
 	'INGESTION',
 	'EVALUATION',
 	'NEWSROOM_REVIEW',
@@ -32,14 +34,16 @@ CREATE TYPE article_stage AS ENUM (
 	'ARCHIVE'
 );
 
-CREATE TYPE user_state AS ENUM (
+CREATE TYPE user_state AS ENUM
+(
 	'REGISTERED',
 	'ACTIVE',
 	'RESTRICTED',
 	'DEACTIVATED'
 );
 
-CREATE TYPE reporter_badge AS ENUM (
+CREATE TYPE reporter_badge AS ENUM
+(
 	'VIEWER',
 	'FIELD',
 	'PHOTOGRAPHER',
@@ -49,7 +53,8 @@ CREATE TYPE reporter_badge AS ENUM (
 	'INSPECTOR'
 );
 
-CREATE TYPE editor_badge AS ENUM (
+CREATE TYPE editor_badge AS ENUM
+(
 	'DEV',
 	'ADMIN',
 	'DIRECTOR',

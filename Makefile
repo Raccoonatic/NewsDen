@@ -6,7 +6,7 @@
 #    By: Mapache <ljtorcate@gmail.com>               █░  ░░░ ░░ ░░░  ░█        #
 #                                                    ███████░░░░███████        #
 #    Created: 2026/10/19 07:44:25 by Mapache        ░▒▒██ ▓  ██  ▓ ██▒▒░       #
-#    Updated: 2026/10/27 23:53:23 by Mapache            ▒ ░██  ██░ ▒           #
+#    Updated: 2026/10/28 13:00:52 by Mapache            ▒ ░██  ██░ ▒           #
 #                                                          ██████              #
 #                                                                              #
 # **************************************************************************** #
@@ -99,7 +99,7 @@ all:
 			echo ""; \
 			if [ "$$DB_TMP" = "$$DB_TMP_CONFIRM" ] && [ -n "$$DB_TMP" ]; then \
 				echo "$$DB_TMP" > ".tmp "; \
-				echo -e "$(LIME)✓ $(BABY)Password captured $(LIME)securely$(B_WI)!$(RSET)"; \
+				echo -e "\n$(LIME)✓ $(BABY)Password captured $(LIME)securely$(B_WI)!$(RSET)"; \
 				break; \
 			else \
 				echo -e "$(BLOD)Error$(B_WI): $(NEOR)Passwords do not match or are empty$(B_WI). $(ORNG)Please try again$(B_WI).$(RSET)"; \
@@ -111,7 +111,16 @@ all:
 	@echo -e "\n"
 	@sleep 2
 	@make load_schemas
+	sudo docker exec -i newsden-postgres psql -U postgres -d postgres < ./database/seed.sql
 	@sleep 2
+	@make launch
+	# TODO: Remove seeding
+
+rebirth: postgres_delete all
+
+restart: postgres_down all
+
+launch:
 	@echo -e "\n$(MINT)             Starting $(LIME)Next.js $(MINT)development server$(B_WI)...$(RSET)"
 	@echo -e "$(NEOR)\n     This window will now act as the running server, don't \n   close it while is working. If you need to use the terminal \n                    please open a new window.$(RSET)"
 	@sleep 2
@@ -131,11 +140,6 @@ all:
 	@sleep 0.5
 	@echo -e " 🚀\n"
 	@npm run dev
-
-
-rebirth: postgres_delete all
-
-restart: postgres_down all
 
 load_schemas:
 	@if sudo docker ps --format '{{.Names}}' | grep -q '^newsden-postgres$$'; then \
@@ -175,7 +179,7 @@ tools:
 	@echo -e "$(PINK)  - $(PURP)Node.js"
 	@echo -e "$(PINK)  - $(PURP)NVM (Node Version Manager)"
 	@echo -e "$(PINK)  - $(PURP)NPM (Node Package Manager)"
-	@echo -e "$(B_WI)\n     If you'd like to proceed, hit $(LIME)enter. Otherwise, $(ORNG)cancel \n                    $(NEOR)(\"Ctrl + C\" by default).$(RSET)"
+	@echo -e "$(B_WI)\n     If you'd like to proceed, hit $(LIME)Enter$(B_WI). Otherwise, $(ORNG)cancel \n                    $(NEOR)(\"Ctrl + C\" by default).$(RSET)"
 	@read dummy
 	@echo -e "$(BABY)Updating Packages...$(RSET)"
 	sudo apt update
@@ -290,8 +294,10 @@ postgres_up:
 		echo -e "$(MINT)Creating and starting new $(B_WI)'$(BABY)newsden-postgres$(B_WI)' $(MINT)container...$(RSET)\n"; \
 		sudo docker run --name newsden-postgres -e POSTGRES_PASSWORD=$(PSWD) -p 5432:5432 -d postgres:16; \
 		touch .env.local; \
-		echo -n "" >.env.local && echo -n "DATABASE_URL=postgresql://postgres:" >.env.local; \
-		echo -n $(PSWD) >>.env.local && echo -n "@localhost:5432/postgres" >>.env.local; \
+		echo -n "" >.env.local; \
+		echo -e "PGHOST=localhost\nPGPORT=5432\nPGDATABASE=postgres\nPGUSER=postgres\nPGPASSWORD=$(PSWD)\n" >.env.local; \
+		echo -n "DATABASE_URL=postgresql://postgres:" >>.env.local; \
+		echo -n $(PSWD) >>.env.local && echo -e "@localhost:5432/postgres" >>.env.local; \
 		sleep 1; \
 	fi
 

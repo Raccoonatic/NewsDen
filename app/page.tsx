@@ -6,117 +6,68 @@
 /*   By: Mapache <ljtorcate@gmail.com>               █░  ░░░ ░░ ░░░  ░█       */
 /*                                                   ███████░░░░███████       */
 /*   Created: 2026/10/23 23:27:08 by Mapache        ░▒▒██ ▓  ██  ▓ ██▒▒░      */
-/*   Updated: 2026/10/27 23:01:41 by Mapache            ▒ ░██  ██░ ▒          */
+/*   Updated: 2026/10/28 12:25:07 by Mapache            ▒ ░██  ██░ ▒          */
 /*                                                         ██████             */
 /*                                                                            */
 /* ************************************************************************** */
 
-// import pool from '@/lib/db';
-
-// export default async function Home() {
-//   const result = await pool.query('SELECT NOW()');
-//   const dbTime = result.rows[0].now;
-
-//   return (
-//     <main className="flex min-h-screen flex-col items-center justify-center p-24 bg-gray-900 text-white">
-//       <h1 className="text-4xl font-bold text-emerald-400 mb-4">
-//         🦝 NewsDen Database Connected!
-//       </h1>
-//       <p className="text-xl">
-//         Database Time: <span className="font-mono text-pink-400">{dbTime.toString()}</span>
-//       </p>
-//     </main>
-//   );
-// }
-
-import { Pool } from 'pg';
-import { revalidatePath } from 'next/cache';
-import pool from '@/lib/db';
-
-interface User {
-  id: string;
-  email: string;
-  full_name: string;
-  status: string;
-  id_checked: boolean;
-}
-
-async function createUser(formData: FormData) {
-  'use server';
-  const fullName = formData.get('fullName') as string;
-  const email = formData.get('email') as string;
-
-  try {
-    // We are inserting 'id_checked' explicitly as false as per your DBeaver table defaults
-    await pool.query(
-      'INSERT INTO users (full_name, email, id_checked) VALUES ($1, $2, $3)',
-      [fullName, email, false]
-    );
-    // This tells Next.js to wipe its cache and rebuild the page with the new user!
-    revalidatePath('/');
-  } catch (error) {
-    console.error("Failed to create user:", error);
-  }
-}
+import { query } from '@/lib/db';
+import { EditorWithKeycard } from '@/types/keycard';
 
 export default async function Home() {
-  // Fetch existing users
-  const { rows: users } = await pool.query('SELECT id, full_name, email FROM editors ORDER BY created_at DESC');
+  const sql = `
+    SELECT
+      e.id, e.email, e.full_name, e.avatar_url, e.created_at,
+      JSON_BUILD_OBJECT(
+        'id', k.id,
+        'editor_id', k.editor_id,
+        'status', k.status,
+        'id_checked', k.id_checked,
+        'badges', k.badges,
+        'updated_at', k.updated_at
+      ) as keycard
+    FROM editors e
+    LEFT JOIN editor_keycards k ON e.id = k.editor_id
+    ORDER BY e.created_at DESC;
+  `;
+
+  const { rows } = await query(sql);
+  const editors = rows as EditorWithKeycard[];
+
   return (
     <main className="min-h-screen p-8 bg-gray-900 text-white font-sans">
-        <div className="max-w-2xl mx-auto space-y-8">
-        <h1 className="text-3xl font-bold text-teal-400">Huella Latina: User Registration</h1>
-
-        {/* The Submission Form */}
-        <form action={createUser} className="bg-gray-800 p-6 rounded-lg space-y-4">
-          <div>
-            <label className="block text-sm font-medium mb-1">Full Name</label>
-            <input
-              type="text"
-              name="fullName"
-              required
-              className="w-full p-2 rounded bg-gray-700 border border-gray-600 focus:border-teal-400 outline-none text-white"
-            />
-          </div>
-          <div>
-            <label className="block text-sm font-medium mb-1">Email Address</label>
-            <input
-              type="email"
-              name="email"
-              required
-              className="w-full p-2 rounded bg-gray-700 border border-gray-600 focus:border-teal-400 outline-none text-white"
-            />
-          </div>
-          <button
-            type="submit"
-            className="bg-teal-500 hover:bg-teal-400 text-gray-900 font-bold py-2 px-4 rounded w-full transition-colors"
-          >
-            Register User
-          </button>
-        </form>
-
-        {/* Displaying the Database Records */}
-        <div className="space-y-4">
-          <h2 className="text-xl font-semibold border-b border-gray-700 pb-2">Registered Accounts</h2>
-          {users.length === 0 ? (
-            <p className="text-gray-400">No users found. Create one above.</p>
+      <div className="max-w-4xl mx-auto">
+        <h1 className="text-4xl font-bold mb-2">NewsDen Workspace</h1>
+        <p className="text-gray-400 mb-8">Internal Editorial Dashboard</p>
+        <div className="bg-gray-800 rounded-lg p-6 shadow-xl border border-gray-700">
+          <h2 className="text-xl font-semibold mb-4 border-b border-gray-700 pb-2">Registered Editors</h2>
+          {editors.length === 0 ? (
+            <p className="text-gray-400 italic">No editors found in the database.</p>
           ) : (
-            users.map((user) => (
-              <div key={user.id} className="bg-gray-800 p-4 rounded-lg border-l-4 border-teal-500 flex justify-between items-center">
-                <div>
-                  <p className="font-bold text-lg">{user.full_name}</p>
-                  <p className="text-sm text-gray-400">{user.email}</p>
+            <div className="space-y-4">
+              {editors.map((editor) => (
+                <div key={editor.id} className="bg-gray-700 p-4 rounded-md flex justify-between items-center">
+                  <div>
+                    <h3 className="font-medium text-lg">{editor.full_name}</h3>
+                    <p className="text-sm text-gray-400">{editor.email}</p>
+                  </div>
+                  <div className="text-right">
+                    <span className={`inline-block px-2 py-1 text-xs font-semibold rounded-full mb-1 ${
+                      editor.keycard?.status === 'ACTIVE' ? 'bg-green-900 text-green-300' : 'bg-yellow-900 text-yellow-300'
+                    }`}>
+                      {editor.keycard?.status || 'UNKNOWN'}
+                    </span>
+                    <div className="flex gap-1 justify-end mt-1">
+                      {editor.keycard?.badges?.map((badge) => (
+                        <span key={badge} className="px-2 py-0.5 bg-blue-900 text-blue-200 text-xs rounded">
+                          {badge}
+                        </span>
+                      ))}
+                    </div>
+                  </div>
                 </div>
-                <div className="text-right">
-                  <span className="bg-gray-700 text-teal-300 text-xs px-2 py-1 rounded uppercase tracking-wide">
-                    {user.status}
-                  </span>
-                  <p className="text-xs text-gray-500 mt-1">
-                    ID Checked: {user.id_checked ? '✅' : '❌'}
-                  </p>
-                </div>
-              </div>
-            ))
+              ))}
+            </div>
           )}
         </div>
       </div>
