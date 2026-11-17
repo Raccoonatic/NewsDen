@@ -140,6 +140,7 @@ TBD
 - Version Control for Node.js & NPM: NVM (Node Version Manager)
 - PostgresSQL Interaction Functions: NPM (Node Package Management)
 - Web Design & Infrastructure Tools: NPX (Node Package Execute)
+- Google Drive Archive Integration: Google APIs Node.js Client (googleapis)
 
 ---
 

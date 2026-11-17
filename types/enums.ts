@@ -6,7 +6,7 @@
 /*   By: Mapache <ljtorcate@gmail.com>               █░  ░░░ ░░ ░░░  ░█       */
 /*                                                   ███████░░░░███████       */
 /*   Created: 2026/10/28 11:17:45 by Mapache        ░▒▒██ ▓  ██  ▓ ██▒▒░      */
-/*   Updated: 2026/10/28 11:53:19 by Mapache            ▒ ░██  ██░ ▒          */
+/*   Updated: 2026/11/17 16:00:01 by Mapache            ▒ ░██  ██░ ▒          */
 /*                                                         ██████             */
 /*                                                                            */
 /* ************************************************************************** */
@@ -55,3 +55,10 @@ export type EditorBadge =
 	| 'AGENT'
 	| 'MOD'
 	| 'NITWIT';
+
+export type AssetCategory =
+	| 'BODY'
+	| 'IMG'
+	| 'VID'
+	| 'SND'
+	| 'DOC';

@@ -6,7 +6,7 @@
 #    By: Mapache <ljtorcate@gmail.com>               █░  ░░░ ░░ ░░░  ░█        #
 #                                                    ███████░░░░███████        #
 #    Created: 2026/10/19 07:44:25 by Mapache        ░▒▒██ ▓  ██  ▓ ██▒▒░       #
-#    Updated: 2026/10/28 13:00:52 by Mapache            ▒ ░██  ██░ ▒           #
+#    Updated: 2026/11/17 16:17:06 by Mapache            ▒ ░██  ██░ ▒           #
 #                                                          ██████              #
 #                                                                              #
 # **************************************************************************** #
@@ -31,6 +31,7 @@ SCHEMA = 01_enum_schema.sql
 SCHEMA += 02_editor_schema.sql
 SCHEMA += 03_reporter_schema.sql
 SCHEMA += 04_article_schema.sql
+SCHEMA += 05_archive_schema.sql
 
 BLUEPRINT = $(addprefix $(DB_DIR), $(SCHEMA))
 
@@ -112,9 +113,11 @@ all:
 	@sleep 2
 	@make load_schemas
 	sudo docker exec -i newsden-postgres psql -U postgres -d postgres < ./database/seed.sql
+	@echo "" >> .env.local
+	cat ./.assets/.drv >> .env.local
 	@sleep 2
 	@make launch
-	# TODO: Remove seeding
+	# TODO: Remove seeding and procure a safer drive keys registering method.
 
 rebirth: postgres_delete all
 
@@ -233,7 +236,10 @@ tools:
 	fi
 	@if [ -s "$$HOME/.nvm/nvm.sh" ]; then \
 		echo -e "$(BABY)✓$(MINT) NVM $(LIME)is already installed. $(NEOR)Checking for updates...$(B_WI)"; \
-		cd $$HOME/.nvm && git fetch --tags origin && git checkout `git describe --abbrev=0 --tags --match "v[0-9]*" $(git rev-list --tags --max-count=1)` >/dev/null 2>&1 && cd - >/dev/null 2>&1; \
+		cd "$$HOME/.nvm" && \
+		git fetch --tags origin && \
+		git checkout $$(git describe --abbrev=0 --tags --match "v[0-9]*" $$(git rev-list --tags --max-count=1)) >/dev/null 2>&1 && \
+		cd - >/dev/null 2>&1; \
 		echo -e "$(RSET)"; \
 	else \
 		echo -e "$(PINK)✗$(MINT) NVM $(BLOD)not found. $(NEOR)Installing...$(B_WI)"; \
@@ -242,11 +248,15 @@ tools:
 	fi
 	@if command -v node >/dev/null 2>&1 || [ -s "$$HOME/.nvm/nvm.sh" ]; then \
 		echo -e "$(BABY)✓$(MINT) Node.js $(LIME)is already installed. $(NEOR)Checking for updates...$(B_WI)"; \
-		. "$$HOME/.nvm/nvm.sh" && nvm install --lts >/dev/null 2>&1; \
+		. "$$HOME/.nvm/nvm.sh" && \
+		nvm install --lts >/dev/null 2>&1 && \
+		nvm use --lts >/dev/null 2>&1; \
 		echo -e "$(RSET)"; \
 	else \
 		echo -e "$(PINK)✗$(MINT) Node.js $(BLOD)not found. $(NEOR)Installing...$(B_WI)"; \
-		. "$$HOME/.nvm/nvm.sh" && nvm install --lts >/dev/null 2>&1; \
+		. "$$HOME/.nvm/nvm.sh" && \
+		nvm install --lts >/dev/null 2>&1 && \
+		nvm use --lts >/dev/null 2>&1; \
 		echo -e "$(RSET)"; \
 	fi
 	@if command -v npm >/dev/null 2>&1 || [ -s "$$HOME/.nvm/nvm.sh" ]; then \
@@ -262,6 +272,17 @@ tools:
 		if [ ! -d "node_modules" ]; then \
 			npm install; \
 		fi; \
+		echo -e "$(RSET)"; \
+	fi
+	@if [ -d "node_modules/googleapis" ]; then \
+		echo -e "$(BABY)✓$(MINT) Google APIs (googleapis) $(LIME)is already installed. $(NEOR)Checking for updates...$(B_WI)"; \
+		. "$$HOME/.nvm/nvm.sh" >/dev/null 2>&1 || true; \
+		npm update googleapis >/dev/null 2>&1; \
+		echo -e "$(RSET)"; \
+	else \
+		echo -e "$(PINK)✗$(MINT) Google APIs (googleapis) $(BLOD)not found. $(NEOR)Installing...$(B_WI)"; \
+		. "$$HOME/.nvm/nvm.sh" >/dev/null 2>&1 || true; \
+		npm install googleapis >/dev/null 2>&1; \
 		echo -e "$(RSET)"; \
 	fi
 

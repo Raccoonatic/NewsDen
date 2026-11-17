@@ -6,7 +6,7 @@
 /*   By: Mapache <ljtorcate@gmail.com>               █░  ░░░ ░░ ░░░  ░█       */
 /*                                                   ███████░░░░███████       */
 /*   Created: 2026/10/28 11:17:28 by Mapache        ░▒▒██ ▓  ██  ▓ ██▒▒░      */
-/*   Updated: 2026/10/28 11:53:17 by Mapache            ▒ ░██  ██░ ▒          */
+/*   Updated: 2026/11/17 15:29:06 by Mapache            ▒ ░██  ██░ ▒          */
 /*                                                         ██████             */
 /*                                                                            */
 /* ************************************************************************** */
@@ -42,4 +42,6 @@ export interface Article
   created_at: Date;
   updated_at: Date;
   published_at: Date | null;
+  drive_folder_id: string | null;
+  drive_folder_url: string | null;
 }
